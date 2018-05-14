@@ -4,8 +4,11 @@ class Hangman
   cat flower beauty light earth machine book news yahoo google internet
   bangladesh india america cricket football friday sunday sunny"
 
+ attr_reader :hangman_ui
+
   def initialize(lives)
     @lives = lives
+    @hangman_ui = HangmanConsoleUi.new
   end
 
   def play
@@ -13,28 +16,28 @@ class Hangman
     guesses = []
 
     while game_in_progress?(word, guesses, @lives) do
-      display_lives_remaining(@lives)
-      display_previous_guesses(guesses) if guesses.any?
+      hangman_ui.display_lives_remaining(@lives)
+      hangman_ui.display_previous_guesses(guesses) if guesses.any?
       clue = build_clue(word, guesses)
-      display_clue(clue)
+      hangman_ui.display_clue(clue)
 
-      guess = get_guess_from_player
+      guess = hangman_ui.get_guess_from_player
       if !valid_guess?(guess)
-        display_invalid_guess_error(guess)
+        hangman_ui.display_invalid_guess_error(guess)
         next
       end
 
       if duplicate_guess?(guess, guesses)
-        display_duplicate_guess_error(guess)
+        hangman_ui.display_duplicate_guess_error(guess)
         next
       end
 
       guesses << guess
 
       if guess_correct?(guess, word)
-        display_correct_guess_message(guess)
+        hangman_ui.display_correct_guess_message(guess)
       else
-        display_incorrect_guess_message(guess)
+        hangman_ui.display_incorrect_guess_message(guess)
         @lives -= 1
       end
     end
@@ -81,11 +84,13 @@ class Hangman
 
   def display_game_result(word, guesses, lives)
     if won?(word, guesses, lives)
-      display_won_message(word)
+      hangman_ui.display_won_message(word)
     elsif lost?(word, guesses, lives)
-      display_lost_message
+      hangman_ui.display_lost_message
     end
   end
+
+class HangmanConsoleUi
 
   def get_guess_from_player
     print "\nGuess a letter: "
@@ -130,6 +135,7 @@ class Hangman
   def display_lost_message
     puts "You are Hanged"
   end
+end
 end
 
 hangman = Hangman.new(8)
