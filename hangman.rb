@@ -1,14 +1,13 @@
-# Language: Ruby, Level: Level 3
 class Hangman
   WORD_DICTIONARY = %w"learning lollipop education image computer mobile january february
   cat flower beauty light earth machine book news yahoo google internet
   bangladesh india america cricket football friday sunday sunny"
 
- attr_reader :hangman_ui
+ attr_accessor :hangman_ui, :lives
 
-  def initialize(lives)
+  def initialize(lives, ui)
     @lives = lives
-    @hangman_ui = HangmanConsoleUi.new
+    @hangman_ui = ui
   end
 
   def play
@@ -89,54 +88,5 @@ class Hangman
       hangman_ui.display_lost_message
     end
   end
-
-class HangmanConsoleUi
-
-  def get_guess_from_player
-    print "\nGuess a letter: "
-    gets.chomp.downcase
-  end
-
-  def display_invalid_guess_error(guess)
-    puts "#{guess} is an invalid guess. Please enter valid guess"
-  end
-
-  def display_duplicate_guess_error(guess)
-    puts "You have already used #{guess}. Please choose a different guess"
-  end
-
-  def display_correct_guess_message(guess)
-    puts "#{guess} is a correct guess"
-  end
-
-  def display_incorrect_guess_message(guess)
-    puts "Oops #{guess} is a wrong guess. Try again"
-  end
-
-  def display_previous_guesses(guesses)
-    puts "The guesses you have already made : #{guesses.join(", ")}"
-  end
-
-  def display_clue(clue)
-    formatted_clue = clue.map do |c|
-      c.nil? ? '_' : c
-    end
-    puts formatted_clue.join(" ")
-  end
-
-  def display_lives_remaining(lives)
-    puts "You have #{lives} lives left"
-  end
-
-  def display_won_message(word)
-    puts "You Won. The word you guessed is #{word}"
-  end
-
-  def display_lost_message
-    puts "You are Hanged"
-  end
-end
 end
 
-hangman = Hangman.new(8)
-hangman.play
