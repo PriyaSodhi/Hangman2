@@ -52,7 +52,7 @@ class Hangman
   end
 
   def valid_guess?(guess)
-    /\A[A-Za-z]\z/.match?(guess)
+    /\A[A-Za-z]\z/.match?(guess.to_s)
   end
 
   def duplicate_guess?(guess, guesses)
@@ -60,6 +60,10 @@ class Hangman
   end
 
   def game_in_progress?(word, guesses, lives)
+    if word_guessed?(word, guesses) && lives < 1
+      raise ArgumentError, "word is guessed correctly but lives are #{lives}"
+    end
+
     !won?(word, guesses, lives) && !lost?(word, guesses, lives)
   end
 
