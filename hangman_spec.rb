@@ -33,6 +33,7 @@ RSpec.describe Hangman do
         it "returns false" do
           expect(valid_guess).to be false
         end
+      end
 
         context "when guess is a special character" do
           let(:guess) { "$" }
@@ -51,7 +52,6 @@ RSpec.describe Hangman do
         end
       end
     end
-  end
 
   describe "#duplicate_guess?" do
     let(:guesses) { ['l', 'a', 'f'] }

@@ -3,7 +3,7 @@ class Hangman
   cat flower beauty light earth machine book news yahoo google internet
   bangladesh india america cricket football friday sunday sunny"
 
- attr_accessor :hangman_ui, :lives
+ attr_reader :hangman_ui, :lives
 
   def initialize(lives, ui)
     @lives = lives
