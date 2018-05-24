@@ -1,6 +1,7 @@
 require 'byebug'
 
 class Hangman
+  TurnResult = Struct.new(:status, :guesses, :lives, :clue)
 
  attr_reader :hangman_ui, :lives, :word
 
@@ -10,40 +11,120 @@ class Hangman
     @hangman_ui = ui
   end
 
+  # def play
+  #   guesses = []
+  # 
+  #   while game_in_progress?(word, guesses, @lives) do
+  #     hangman_ui.display_lives_remaining(@lives)
+  #     # byebug
+  #     hangman_ui.display_previous_guesses(guesses) if guesses.any?
+  #     clue = build_clue(word, guesses)
+  #     # byebug
+  #     hangman_ui.display_clue(clue)
+  # 
+  #     # byebug
+  #     guess = hangman_ui.get_guess_from_player
+  #     if !valid_guess?(guess)
+  #       hangman_ui.display_invalid_guess_error(guess)
+  #       next
+  #     end
+  # 
+  #     if duplicate_guess?(guess, guesses)
+  #       hangman_ui.display_duplicate_guess_error(guess)
+  #       next
+  #     end
+  # 
+  #     guesses << guess
+  # 
+  #     if play_turn(word, guess, @lives)
+  #       hangman_ui.display_correct_guess_message(guess)
+  #     else
+  #       hangman_ui.display_incorrect_guess_message(guess)
+  #     end
+  #   end
+  #   display_game_result(word, guesses, @lives)
+  # end
+  # 
+  # def play_turn(word, guess, lives)
+  #   if guess_correct?(guess, word)
+  #     return guess, @lives
+  #   else
+  #     @lives -= 1
+  #     return guess, @lives
+  #   end
+  # 
+  #   # if !valid_guess?(guess)
+  #   #   true
+  #   # else
+  #   #   false
+  #   # end
+  #   #
+  #   # if duplicate_guess?(guess, guesses)
+  #   # end
+  # end
+
+  def play_turn(word, guess, guesses)
+    @status
+    # @clue = build_clue(word, )
+    # puts @clue
+    byebug
+    if !valid_guess?(guess)
+      # TurnResult.new("invalid_guess", [ ], 4, build_clue(word, [ ]) )
+      @status = "invalid_guess"
+      play_turn(word, guess, guesses)
+
+    elsif duplicate_guess?(guess, guesses)
+      @status = "duplicate_guess"
+      play_turn(word, guess, guesses)
+    end
+
+      guesses << guess
+
+    byebug
+    if guess_correct?(guess, word)
+      @status = "correct_guess"
+      return guess, @lives, @status
+    else
+      @lives -= 1
+      @status = "incorrect_guess"
+      return guess, @lives, @status
+    end
+  end
+
   def play
     guesses = []
 
     while game_in_progress?(word, guesses, @lives) do
+      # result = play_turn(word, guesses, lives)
+      # if result["status"] == "won"
+      #    hangman_ui.display_game_result(won)
+      # elsif 
+        
       hangman_ui.display_lives_remaining(@lives)
-      # byebug
       hangman_ui.display_previous_guesses(guesses) if guesses.any?
       clue = build_clue(word, guesses)
-      # byebug
       hangman_ui.display_clue(clue)
 
-      # byebug
       guess = hangman_ui.get_guess_from_player
-      if !valid_guess?(guess)
+      if play_turn(word, guess, guesses).eql?("invalid_guess")
         hangman_ui.display_invalid_guess_error(guess)
-        next
       end
 
-      if duplicate_guess?(guess, guesses)
+      if play_turn(word, guess, guesses).eql?("duplicate_guess")
         hangman_ui.display_duplicate_guess_error(guess)
-        next
       end
 
-      guesses << guess
-
-      if guess_correct?(guess, word)
+      # guesses << guess
+      if play_turn(word, guess, guesses).eql?("correct_guess")
         hangman_ui.display_correct_guess_message(guess)
       else
         hangman_ui.display_incorrect_guess_message(guess)
-        @lives -= 1
       end
     end
     display_game_result(word, guesses, @lives)
   end
+
+
 
   def guess_correct?(guess, word)
     word.downcase.include?(guess)

@@ -1,0 +1,2 @@
+class HangmanConsoleState
+end
