@@ -1,25 +1,27 @@
+require 'byebug'
+
 class Hangman
-  WORD_DICTIONARY = %w"learning lollipop education image computer mobile january february
-  cat flower beauty light earth machine book news yahoo google internet
-  bangladesh india america cricket football friday sunday sunny"
 
- attr_reader :hangman_ui, :lives
+ attr_reader :hangman_ui, :lives, :word
 
-  def initialize(lives, ui)
+  def initialize(word, lives, ui)
+    @word = word
     @lives = lives
     @hangman_ui = ui
   end
 
   def play
-    word = get_random_word
     guesses = []
 
     while game_in_progress?(word, guesses, @lives) do
       hangman_ui.display_lives_remaining(@lives)
+      # byebug
       hangman_ui.display_previous_guesses(guesses) if guesses.any?
       clue = build_clue(word, guesses)
+      # byebug
       hangman_ui.display_clue(clue)
 
+      # byebug
       guess = hangman_ui.get_guess_from_player
       if !valid_guess?(guess)
         hangman_ui.display_invalid_guess_error(guess)
@@ -41,10 +43,6 @@ class Hangman
       end
     end
     display_game_result(word, guesses, @lives)
-  end
-
-  def get_random_word
-    WORD_DICTIONARY.sample
   end
 
   def guess_correct?(guess, word)

@@ -1,9 +1,13 @@
 require_relative 'hangman'
+require_relative 'hangman_console_ui'
+
 require 'rspec'
 
 RSpec.describe Hangman do
-  let(:initial_lives) { 4 }
-  subject(:game) { Hangman.new(initial_lives, nil) }
+  let(:lives) { 4 }
+  let(:ui) { nil }
+  let(:word) { "bangladesh" }
+  subject(:game) { Hangman.new(word, lives, ui) }
 
   describe "#guess_correct?" do
     it "returns true for correct guess" do
@@ -229,5 +233,128 @@ RSpec.describe Hangman do
       end
     end
   end
+
+  describe "#play" do
+    let(:ui) { instance_double(HangmanConsoleUi).as_null_object }
+
+    context "when word has one letter" do
+      let(:word) { "a" }
+      let(:guesses) { [guess] }
+
+      before do
+        allow(ui).to receive(:get_guess_from_player).and_return(*guesses)
+      end
+
+      context "and player have one life" do
+        let(:lives) { 1 }
+
+        context "player guessed correct word" do
+          let(:guess) { "a" }
+
+          it "tells the player how many lives remaining" do
+            game.play
+
+            expect(ui).to have_received(:display_lives_remaining).with(lives)
+          end
+
+          it "tells the player the clue" do
+            game.play
+
+            expect(ui).to have_received(:display_clue).with([nil])
+          end
+
+          it "tells the player that they have won" do
+            game.play
+
+            expect(ui).to have_received(:display_correct_guess_message)
+            expect(ui).to have_received(:display_won_message)
+          end
+        end
+
+        context "player guessed wrong word" do
+          let(:guess) { "w" }
+
+          it "tells the player they have lost" do
+            game.play
+
+            expect(ui).to have_received(:display_incorrect_guess_message)
+            expect(ui).to have_received(:display_lost_message)
+          end
+        end
+
+        context "player made an invalid guess" do
+          let(:guess) { "a" }
+          let(:guesses) { [invalid_guess, valid_guess] }
+          let(:invalid_guess) { "@" }
+          let(:valid_guess) { "l" }
+
+          it "tells the player the guess is valid" do
+            game.play
+
+            expect(ui).to have_received(:display_invalid_guess_error).with(invalid_guess)
+          end
+        end
+      end
+
+      context "and the player have more than one life" do
+        let(:lives) { 5 }
+
+        context "player guessed correct word" do
+          let(:guesses) { ["r", "w", "a"] }
+
+          it "tells the player how many lives remaining" do
+            game.play
+
+            expect(ui).to have_received(:display_lives_remaining).with(lives)
+          end
+
+          it "tells the player previous guesses made" do
+            game.play
+
+            expect(ui).to have_received(:display_previous_guesses).exactly(guesses.length - 1).times
+            # expect(ui).to have_received(:display_won_message)
+          end
+
+          it "tells the player the clue" do
+            game.play
+
+            expect(ui).to have_received(:display_clue).with([nil]).exactly(guesses.length).times
+          end
+
+          it "tells the player that they have won" do
+            game.play
+
+            expect(ui).to have_received(:display_correct_guess_message)
+            expect(ui).to have_received(:display_won_message)
+          end
+        end
+
+        context "player guessed the incorrect word" do
+          let(:guesses) { ["r", "w", "t", "h", "p"] }
+
+          it "tells the player how many lives remaining" do
+            game.play
+
+            expect(ui).to have_received(:display_lives_remaining).exactly(lives).times
+            expect(ui).to have_received(:display_lost_message)
+          end
+        end
+
+        context "player made a duplicate guess" do
+          let(:guesses) { [duplicate_guess, duplicate_guess, valid_guess] }
+          let(:duplicate_guess) { "e" }
+          let(:valid_guess) { "a" }
+
+          it "tells the player the guess is duplicate" do
+            game.play
+
+            expect(ui).to have_received(:display_duplicate_guess_error).with(duplicate_guess)
+            expect(ui).to have_received(:display_won_message)
+          end
+        end
+      end
+    end
+  end
 end
+
 
