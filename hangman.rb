@@ -89,13 +89,5 @@ class Hangman
       guesses.include?(letter.downcase) ? letter : nil
     end
   end
-
-  # def display_game_result(word, guesses, lives)
-  #   if won?(word, guesses, lives)
-  #     hangman_ui.display_won_message(word)
-  #   elsif lost?(word, guesses, lives)
-  #     hangman_ui.display_lost_message
-  #   end
-  # end
 end
 
