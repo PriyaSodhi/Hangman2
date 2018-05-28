@@ -1,9 +1,10 @@
 require 'byebug'
+require_relative 'hangman_console_state'
 
 class Hangman
 
   attr_reader :hangman_ui, :lives, :word, :guesses
-  TurnResult = Struct.new(:state, :lives, :guesses, :clue, :game_in_progress)
+  TurnResult = Struct.new(:state, :lives, :guesses, :clue, :game_in_progress, :won, :lost)
 
   def initialize(word, lives, ui)
     @word = word
@@ -15,15 +16,15 @@ class Hangman
   def play
     game_state = start_game
 
-    while game_state[:game_in_progress] == true do
+    while game_state.game_in_progress == true do
       # byebug
-      hangman_ui.display_lives_remaining(game_state[:lives])
-      hangman_ui.display_previous_guesses(game_state[:guesses]) if game_state[:guesses].any?
-      hangman_ui.display_clue(game_state[:clue])
+      hangman_ui.display_lives_remaining(game_state.lives)
+      hangman_ui.display_previous_guesses(game_state.guesses) if game_state.guesses.any?
+      hangman_ui.display_clue(game_state.clue)
       guess = hangman_ui.get_guess_from_player
       game_state = play_turn(guess)
 
-      case game_state[:state]
+      case game_state.state
       when "invalid_guess"
         hangman_ui.display_invalid_guess_error(guess)
       when "duplicate_guess"
@@ -35,10 +36,9 @@ class Hangman
       end
     end
 
-    # display_game_result(word, guesses, @lives
-    if won?(word, guesses, @lives)
+    if game_state.won == true
       hangman_ui.display_won_message(word)
-    elsif lost?(word, guesses, @lives)
+    elsif game_state.lost == true
       hangman_ui.display_lost_message
     end
   end
@@ -47,45 +47,55 @@ class Hangman
     # byebug
     clue = build_clue(word, guesses)
     game_in_progress = game_in_progress?(word, guesses, lives)
-    TurnResult.new("game_in_progress", lives, guesses, clue, game_in_progress)
+    won = won?(word, guesses, lives)
+    lost = lost?(word, guesses, lives)
+    TurnResult.new("game_in_progress", lives, guesses, clue, game_in_progress, won, lost )
   end
 
   def play_turn(guess)
     # byebug
-    result = TurnResult.new("game_in_progress", lives, guesses, nil, nil)
+    result = TurnResult.new("game_in_progress", lives, guesses, nil, nil, nil, nil)
 
       if !valid_guess?(guess)
-        result[:state] = "invalid_guess"
-        result[:lives] = lives
-        result[:clue] = build_clue(word, guesses)
-        result[:game_in_progress] = game_in_progress?(word, guesses, lives)
+        result.state = "invalid_guess"
+        result.lives = lives
+        result.clue = build_clue(word, guesses)
+        result.game_in_progress = game_in_progress?(word, guesses, lives)
+        result.won = won?(word, guesses, lives)
+        result.lost = lost?(word, guesses, lives)
         return result
       end
 
       if duplicate_guess?(guess, guesses)
-        result[:state] = "duplicate_guess"
-        result[:lives] = lives
-        result[:clue] = build_clue(word, guesses)
-        result[:game_in_progress] = game_in_progress?(word, guesses, lives)
+        result.state = "duplicate_guess"
+        result.lives = lives
+        result.clue = build_clue(word, guesses)
+        result.game_in_progress = game_in_progress?(word, guesses, lives)
+        result.won = won?(word, guesses, lives)
+        result.lost = lost?(word, guesses, lives)
         return result
       end
 
       guesses << guess
       if guess_correct?(guess, word)
-        result[:state] = "guess_correct"
-        result[:lives] = lives
-        result[:guesses] = guesses
-        result[:clue] = build_clue(word, guesses)
-        result[:game_in_progress] = game_in_progress?(word, guesses, lives)
+        result.state = "guess_correct"
+        result.lives = lives
+        result.guesses = guesses
+        result.clue = build_clue(word, guesses)
+        result.game_in_progress = game_in_progress?(word, guesses, lives)
+        result.won = won?(word, guesses, lives)
+        result.lost = lost?(word, guesses, lives)
         return result
 
       else
         @lives -= 1
-        result[:state] = "guess_incorrect"
-        result[:lives] = lives
-        result[:guesses] = guesses
-        result[:clue] = build_clue(word, guesses)
-        result[:game_in_progress] = game_in_progress?(word, guesses, lives)
+        result.state = "guess_incorrect"
+        result.lives = lives
+        result.guesses = guesses
+        result.clue = build_clue(word, guesses)
+        result.game_in_progress = game_in_progress?(word, guesses, lives)
+        result.won = won?(word, guesses, lives)
+        result.lost = lost?(word, guesses, lives)
         return result
       end
     end
