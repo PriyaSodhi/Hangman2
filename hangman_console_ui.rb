@@ -1,15 +1,21 @@
 class HangmanConsoleUi
 
   def get_guess_from_player
-    print "\nGuess a letter: "
     gets.chomp.downcase
   end
 
-  def display_invalid_guess_error(guess)
+  def display_start_of_turn(lives, guesses, clue)
+    display_lives_remaining(lives)
+    display_previous_guesses(guesses) if guesses.any?
+    display_clue(clue)
+    print "\nGuess a letter: " # prompt_user
+  end
+
+  def display_invalid_guess_message(guess)
     puts "#{guess} is an invalid guess. Please enter valid guess"
   end
 
-  def display_duplicate_guess_error(guess)
+  def display_duplicate_guess_message(guess)
     puts "You have already used #{guess}. Please choose a different guess"
   end
 
@@ -36,8 +42,8 @@ class HangmanConsoleUi
     puts "You have #{lives} lives left"
   end
 
-  def display_won_message(word)
-    puts "You Won. The word you guessed is #{word}"
+  def display_won_message
+    puts "You Won."
   end
 
   def display_lost_message

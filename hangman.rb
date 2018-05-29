@@ -17,40 +17,40 @@ class Hangman
     game_in_progress = game_in_progress?(word, guesses, lives)
     won = won?(word, guesses, lives)
     lost = lost?(word, guesses, lives)
-    TurnResult.new("game_in_progress", lives, guesses, clue, game_in_progress, won, lost )
+    TurnResult.new("game_just_started", lives, guesses, clue, game_in_progress, won, lost )
   end
 
   def play_turn(guess)
-    # byebug
-    result = TurnResult.new("game_in_progress", lives, guesses, nil, nil, nil, nil)
 
-    result.lives = lives
-    result.clue = build_clue(word, guesses)
-    result.game_in_progress = game_in_progress?(word, guesses, lives)
-    result.won = won?(word, guesses, lives)
-    result.lost = lost?(word, guesses, lives)
 
-      if !valid_guess?(guess)
-        result.state = "invalid_guess"
-        return result
-      end
+     TurnResult.new(
+      validate_guess(guess),
+      remaining_lives(lives)
+      guesses,
+      build_clue(word, guesses),
+      game_in_progress?(word, guesses, lives),
+      won?(word, guesses, lives),
+      lost?(word, guesses, lives) )
+  end
 
-      if duplicate_guess?(guess, guesses)
-        result.state = "duplicate_guess"
-        return result
-      end
-
+  def validate_guess(guess)
+    if !valid_guess?(guess)
+      :invalid_guess
+    elsif duplicate_guess?(guess, guesses)
+      :duplicate_guess
+    elsif guess_correct?(guess, word)
       guesses << guess
-      if guess_correct?(guess, word)
-        result.state = "guess_correct"
-        return result
-
-      else
-        @lives -= 1
-        result.state = "guess_incorrect"
-        return result
-      end
+      :guess_correct
+    elsif !guess_correct?(guess, word)
+      guesses << guess
+      :guess_incorrect
     end
+  end
+
+  def remaining_lives(lives)
+    incorrect_guess_array = guesses - word.downcase.chars.uniq
+    lives - incorrect_guess_array.length
+  end
 
   def guess_correct?(guess, word)
     word.downcase.include?(guess)
