@@ -12,7 +12,6 @@ class Hangman
   end
 
   def start_game
-    # byebug
     clue = build_clue(word, guesses)
     game_in_progress = game_in_progress?(word, guesses, lives)
     won = won?(word, guesses, lives)
@@ -21,17 +20,15 @@ class Hangman
   end
 
   def play_turn(guess)
-
-
-     TurnResult.new(
+    TurnResult.new(
       validate_guess(guess),
-      remaining_lives(lives)
+      remaining_lives,
       guesses,
       build_clue(word, guesses),
-      game_in_progress?(word, guesses, lives),
-      won?(word, guesses, lives),
-      lost?(word, guesses, lives) )
-  end
+      game_in_progress?(word, guesses, remaining_lives),
+      won?(word, guesses, remaining_lives),
+      lost?(word, guesses, remaining_lives) )
+    end
 
   def validate_guess(guess)
     if !valid_guess?(guess)
@@ -47,9 +44,8 @@ class Hangman
     end
   end
 
-  def remaining_lives(lives)
-    incorrect_guess_array = guesses - word.downcase.chars.uniq
-    lives - incorrect_guess_array.length
+  def remaining_lives
+    lives - (guesses - word.downcase.chars.uniq).length
   end
 
   def guess_correct?(guess, word)
