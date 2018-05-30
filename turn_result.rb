@@ -8,9 +8,6 @@ attr_reader :result_of_guess_state, :remaining_lives, :guesses, :clue, :word
     @guesses = guesses
     @clue = clue
     @word = word
-    # @game_in_progress = game_in_progress
-    # @won = won
-    # @lost = lost
   end
 
   def game_in_progress?
