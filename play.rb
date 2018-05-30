@@ -2,8 +2,11 @@ require_relative 'hangman.rb'
 require_relative 'hangman_console_ui.rb'
 require 'byebug'
 =begin
-
+The purpose of play class
+1. Display the initial state of the game
+2. Updates the state of the game after playing the turn
 =end
+
 class Play
 
   attr_reader :hangman, :hangman_ui
