@@ -1,6 +1,11 @@
 require 'byebug'
 require_relative 'turn_result.rb'
-
+=begin
+The Purpose of this class is
+1. Validate the user input
+2. Manages the remaining_lives and clue
+3. Manages the state of the game
+=end
 class Hangman
 
   attr_reader  :lives, :word, :guesses
@@ -46,4 +51,19 @@ class Hangman
       guesses.include?(letter.downcase) ? letter : nil
     end
   end
-end
+
+  def start_game
+    clue = build_clue
+    TurnResult.new("game_just_started", lives, guesses, clue, word)
+  end
+
+  def play_turn(guess)
+    TurnResult.new(
+      validate_guess(guess),
+      remaining_lives,
+      guesses,
+      build_clue,
+      word )
+    end
+  end
+

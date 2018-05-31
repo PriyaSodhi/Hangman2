@@ -42,8 +42,8 @@ class HangmanConsoleUi
     puts "You have #{lives} lives left"
   end
 
-  def display_won_message
-    puts "You Won."
+  def display_won_message(word)
+    puts "You Won. The word you guessed is #{word}"
   end
 
   def display_lost_message

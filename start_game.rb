@@ -1,4 +1,4 @@
-require_relative 'hangman.rb'
+require_relative 'hangman_game_state.rb'
 require_relative 'hangman_console_ui.rb'
 require_relative 'play.rb'
 
