@@ -3,6 +3,7 @@ The purpose of Turn result class
 1. Manages the state of the turn
 2. Whether the game is won, lost or in progress
 =end
+require 'byebug'
 class TurnResult
 
 attr_reader :result_of_guess_state, :remaining_lives, :guesses, :clue, :word
