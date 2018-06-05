@@ -1,12 +1,12 @@
 require 'byebug'
-require_relative 'turn_result.rb'
+require_relative 'clue_builder.rb'
 =begin
 The Purpose of this class is
 1. Validate the user input
 2. Manages the remaining_lives and clue
-3. Manages the state of the game
+3. Manages the cumulative state of the game
 =end
-class Hangman
+class HangmanGameState
 
   attr_reader  :lives, :word, :guesses
 
@@ -16,7 +16,7 @@ class Hangman
     @guesses = []
   end
 
-  def validate_guess(guess)
+  def attempt_guess(guess)
     if !valid_guess?(guess)
       :invalid_guess
     elsif duplicate_guess?(guess)
@@ -34,36 +34,16 @@ class Hangman
     lives - (guesses - word.downcase.chars.uniq).length
   end
 
-  def guess_correct?(guess)
+  def guess_correct?(guess) # can be private
     word.downcase.include?(guess)
   end
 
-  def valid_guess?(guess)
+  def valid_guess?(guess) # can be private
     /\A[A-Za-z]\z/.match?(guess.to_s)
   end
 
-  def duplicate_guess?(guess)
+  def duplicate_guess?(guess) # can be private
     guesses.include?(guess)
   end
-
-  def build_clue
-    word.chars.map do |letter|
-      guesses.include?(letter.downcase) ? letter : nil
-    end
-  end
-
-  def start_game
-    clue = build_clue
-    TurnResult.new("game_just_started", lives, guesses, clue, word)
-  end
-
-  def play_turn(guess)
-    TurnResult.new(
-      validate_guess(guess),
-      remaining_lives,
-      guesses,
-      build_clue,
-      word )
-    end
-  end
+end
 
