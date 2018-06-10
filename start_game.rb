@@ -10,4 +10,4 @@ bangladesh india america cricket football friday sunday sunny"
 hangman_ui = HangmanConsoleUi.new
 hangman = HangmanGameState.new(WORD_DICTIONARY.sample, 8)
 hangman_play = Play.new(hangman, hangman_ui)
-hangman_play.play
+hangman_play.play_game

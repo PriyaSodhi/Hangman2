@@ -4,23 +4,24 @@ class HangmanConsoleUi
     gets.chomp.downcase
   end
 
-  def display_subsequent_turn(lives, guesses, clue)
-    display_lives_remaining(lives)
-    display_previous_guesses(guesses) if guesses.any?
-    display_clue(clue)
+  def display_game_state(game_state)
+    display_lives_remaining(game_state.lives)
+    display_previous_guesses(game_state.guesses) if guesses.any?
+    display_clue(game_state.clue)
     print "\nGuess a letter: " # prompt_user
   end
 
-  def display_turn_result_message(guess, guess_state)
-    case guess_state
+  def display_guess_state(turn_result)
+
+    case turn_result.result_of_guess_state
     when :invalid_guess
-      display_invalid_guess_message(guess)
+      display_invalid_guess_message(turn_result.guess)
     when :duplicate_guess
-      display_duplicate_guess_message(guess)
+      display_duplicate_guess_message(turn_result.guess)
     when :guess_correct
-      display_correct_guess_message(guess)
+      display_correct_guess_message(turn_result.guess)
     when :guess_incorrect
-      display_incorrect_guess_message(guess)
+      display_incorrect_guess_message(turn_result.guess)
     end
   end
 

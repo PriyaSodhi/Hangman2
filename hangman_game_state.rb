@@ -4,7 +4,8 @@ require_relative 'clue_builder.rb'
 The Purpose of this class is
 1. Validate the user input
 2. Manages the remaining_lives and clue
-3. Manages the cumulative state of the game
+3. Manages the entire game_state
+4. Talks to turn_result class to hold the state of each turn
 =end
 class HangmanGameState
 
@@ -16,7 +17,21 @@ class HangmanGameState
     @guesses = []
   end
 
-  def attempt_guess(guess)
+  def process_guess(guess)
+    result_of_guess_state = attempt_guess(guess)
+    TurnResult.new(
+      result_of_guess_state,
+      remaining_lives,
+      guess,
+      guesses,
+      clue,
+      game_in_progress?,
+      won?,
+      lost?
+    )
+  end
+
+  def valid_guess(guess)
     if !valid_guess?(guess)
       :invalid_guess
     elsif duplicate_guess?(guess)
@@ -45,5 +60,28 @@ class HangmanGameState
   def duplicate_guess?(guess) # can be private
     guesses.include?(guess)
   end
-end
 
+  def game_in_progress?
+    if word_guessed? && remaining_lives < 1
+      raise ArgumentError, "word is guessed correctly but lives are #{lives}"
+    end
+
+    !won? && !lost?
+  end
+
+  def lost?
+    !word_guessed? && remaining_lives < 1
+  end
+
+  def won?
+    word_guessed? && remaining_lives >= 1
+  end
+
+  def word_guessed?
+    (word.downcase.chars.uniq - guesses).empty?
+  end
+
+  def clue
+    ClueBuilder.build_clue(word, guesses)
+  end
+end
