@@ -22,16 +22,26 @@ RSpec.describe HangmanGameState do
       end
     end
 
-    context "when the player guessed the same letter twice" do
-      let(:guess) { 'k' }
-      let(:guesses) {['k', 'q']}
+    context "when the player guessed the same right letter twice" do
+      let(:guess) { 'b' }
+
       before do
-        expect(game).to receive(:guesses).and_return(guesses)
-        # validate_guess
+        expect(game.validate_guess(guess)).to eql :guess_correct
       end
 
       it "tells the player the guess is duplicate" do
-        # expect(game.validate_guess(guess)).to eql :guess_incorrect
+        expect(game.validate_guess(guess)).to eql :duplicate_guess
+      end
+    end
+
+    context "when the player guessed the same wrong letter twice" do
+      let(:guess) { 'q' }
+
+      before do
+        expect(game.validate_guess(guess)).to eql :guess_incorrect
+      end
+
+      it "tells the player the guess is duplicate" do
         expect(game.validate_guess(guess)).to eql :duplicate_guess
       end
     end
