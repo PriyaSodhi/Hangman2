@@ -19,6 +19,7 @@ class HangmanGameState
 
   def process_guess(guess)
     result_of_guess_state = validate_guess(guess)
+    puts remaining_lives
     TurnResult.new(
       result_of_guess_state,
       remaining_lives,

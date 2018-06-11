@@ -5,8 +5,8 @@ class HangmanConsoleUi
   end
 
   def display_game_state(game_state)
-    display_lives_remaining(game_state.lives)
-    display_previous_guesses(game_state.guesses) if guesses.any?
+    display_lives_remaining(game_state.remaining_lives)
+    display_previous_guesses(game_state.guesses) if game_state.guesses.any?
     display_clue(game_state.clue)
     print "\nGuess a letter: " # prompt_user
   end
