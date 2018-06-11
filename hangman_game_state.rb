@@ -18,7 +18,7 @@ class HangmanGameState
   end
 
   def process_guess(guess)
-    result_of_guess_state = attempt_guess(guess)
+    result_of_guess_state = validate_guess(guess)
     TurnResult.new(
       result_of_guess_state,
       remaining_lives,
@@ -31,7 +31,7 @@ class HangmanGameState
     )
   end
 
-  def valid_guess(guess)
+  def validate_guess(guess)
     if !valid_guess?(guess)
       :invalid_guess
     elsif duplicate_guess?(guess)
