@@ -6,6 +6,7 @@ require 'byebug'
 =begin
 The purpose of play class
 1. Controls the flow of the game
+2. It will talk to view and model
 =end
 
 class Play

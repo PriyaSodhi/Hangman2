@@ -1,3 +1,7 @@
+=begin
+The purpose of play class
+1. Its the view; display the state of the game
+=end
 class HangmanConsoleUi
 
   def get_guess_from_player
