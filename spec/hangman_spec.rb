@@ -65,26 +65,28 @@ RSpec.describe HangmanGameState do
   describe "#word_guessed?" do
     let(:word) { "Hello" }
 
+    context "when the word is guessed " do
       before do
-        expect(game).to receive(:guesses).and_return(guesses)
+        # expect(game).to receive(:guesses).and_return(guesses)
+        game.validate_guess('h')
+        game.validate_guess('l')
+        game.validate_guess('o')
+        game.validate_guess('e')
       end
 
-    context 'when the word is guessed correctly' do
+      it "returns true" do
+        expect(game.word_guessed?).to be true
+      end
+    end
 
-      context 'with letters ordered as they appear in the word' do
-        let(:guesses) {['h', 'e', 'l', 'o']}
-
-        it 'returns true' do
-          expect(game.word_guessed?).to be true
-        end
+    context "when the word is not guessed" do
+      before do
+        game.validate_guess('l')
+        game.validate_guess('z')
       end
 
-      context 'with letters ordered differently' do
-        let(:guesses) {['l', 'o', 'h', 'e']}
-
-        it 'returns true' do
-          expect(game.word_guessed?).to be true
-        end
+      it "returns false" do
+        expect(game.word_guessed?).to be false
       end
     end
   end
