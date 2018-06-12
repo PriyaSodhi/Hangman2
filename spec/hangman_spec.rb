@@ -177,18 +177,22 @@ RSpec.describe HangmanGameState do
     end
 
     context "when the player has no lives remaining" do
-      let(:guess) { 'q' }
 
       before do
-        game.validate_guess(guess)
+        game.validate_guess('q')
+        game.validate_guess('w')
+        game.validate_guess('e')
+        game.validate_guess('t')
+        game.validate_guess('y')
+        game.validate_guess('s')
+        game.validate_guess('o')
+        game.validate_guess('p')
       end
 
       it "will return true" do
         expect(game_lost).to be true
       end
     end
-
-
   end
 end
 #
