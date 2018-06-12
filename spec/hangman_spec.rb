@@ -142,133 +142,55 @@ RSpec.describe HangmanGameState do
       end
     end
   end
+
+  describe "#lost?" do
+    let(:word) { "flux" }
+    let(:game_lost) { game.lost? }
+
+    context "when the player has started the game" do
+
+      it "will return false" do
+        expect(game_lost).to be false
+      end
+    end
+
+    context "when the player has lives remaining" do
+      before do
+        game.validate_guess(guess)
+      end
+
+      context "and the player guessed the wrong letter" do
+        let(:guess) { 'q' }
+
+        it "returns false" do
+          expect(game_lost).to be false
+        end
+      end
+
+      context "and the player guessed the right letter" do
+        let(:guess) { 'f' }
+
+        it "returns false" do
+          expect(game_lost).to be false
+        end
+      end
+    end
+
+    context "when the player has no lives remaining" do
+      let(:guess) { 'q' }
+
+      before do
+        game.validate_guess(guess)
+      end
+
+      it "will return true" do
+        expect(game_lost).to be true
+      end
+    end
+
+
+  end
 end
-
-
-
-
-
-
-  # describe "#guess_correct?" do
-  #   let(:word) { 'flux' }
-  #
-  #   it "returns true for correct guess" do
-  #     expect(game.guess_correct?('l')).to be true
-  #   end
-  #
-  #   it "returns false for incorrect guess" do
-  #     expect(game.guess_correct?('q')).to be false
-  #   end
-  # end
-  #
-  #
-  # describe "#valid_guess?" do
-  #   context "for valid guess" do
-  #     context "when guess is a single character" do
-  #       it "returns true" do
-  #         expect(game.valid_guess?('l')).to be true
-  #       end
-  #     end
-  #   end
-  #
-  #   context "for invalid guess" do
-  #     let(:valid_guess) { game.valid_guess?(guess) }
-  #
-  #     context "when guess is a number " do
-  #       let(:guess) { 4 }
-  #
-  #       it "returns false" do
-  #         expect(valid_guess).to be false
-  #       end
-  #     end
-  #
-  #       context "when guess is a special character" do
-  #         let(:guess) { "$" }
-  #
-  #         it "returns false" do
-  #           expect(valid_guess).to be false
-  #         end
-  #       end
-  #
-  #       context "when guess is more than one character" do
-  #         let(:guess) { "gdsjh" }
-  #
-  #         it "returns false" do
-  #           expect(valid_guess).to be false
-  #         end
-  #       end
-  #     end
-  #   end
-  # end
-
-
-  # describe "#duplicate_guess?" do
-  #   let(:guesses) { ['l'] }
-  #   let(:duplicate_guess) { game.duplicate_guess?(*guesses) }
-  #
-  #   context "for duplicate guess" do
-  #     let(:guess) { 'l' }
-  #
-  #     it "returns true" do
-  #       expect(duplicate_guess).to be true
-  #     end
-  #   end
-  #
-  #   context "for unused guess" do
-  #     let(:guess) { 'y' }
-  #
-  #     it "returns false" do
-  #       expect(duplicate_guess).to be false
-  #     end
-  #   end
-  # end
-
-
-#
-#   describe "#lost?" do
-#     let(:word) { "flux" }
-#     let(:game_lost) { game.lost?(word, guesses, lives) }
-#
-#     context "when word is not guessed" do
-#       let(:guesses) { ['f', 'k', 'l'] }
-#
-#       context "when player has no lives remaining" do
-#         let(:lives) { 0 }
-#
-#         it "returns true" do
-#           expect(game_lost).to be true
-#         end
-#       end
-#
-#       context "when player has lives remaining" do
-#         let(:lives) { 6 }
-#
-#         it "returns false" do
-#           expect(game_lost).to be false
-#         end
-#       end
-#     end
-#
-#     context "when word is guessed" do
-#       let(:guesses) { word.chars}
-#
-#       context "when player has no lives remaining" do
-#         let(:lives) { 0 }
-#
-#         it "returns false" do
-#           expect(game_lost).to be false
-#         end
-#       end
-#
-#       context "when player has lives remaining" do
-#         let(:lives) { 8 }
-#
-#         it "returns false" do
-#           expect(game_lost).to be false
-#         end
-#       end
-#     end
-#   end
 #
 #   describe "#game_in_progress?" do
 #     let(:word) { "Hello" }
