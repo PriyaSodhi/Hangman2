@@ -89,55 +89,75 @@ RSpec.describe HangmanGameState do
     end
   end
 
-  xdescribe "#won?" do
+  describe "#won?" do
     let(:word) { "flux" }
     let(:game_won) { game.won? }
 
-    before do
-      expect(game).to receive(:guesses).and_return(guesses)
-      # expect(game).to receive(:remaining_lives).and_return(8)
-      expect(game).to receive(:remaining_lives)
-      .and_return(remaining_lives)
+    context "when the player has started the game" do
+
+      it "will return false" do
+        expect(game_won).to be false
+      end
     end
 
-    context "when the word is guessed" do
-      let(:guesses) { word.chars }
+    context "when the player has lives remaining" do
 
-      context "when player has lives remaining" do
-        let(:remaining_lives) { 8 }
+      before do
+        game.validate_guess(guess)
+      end
 
-        it "returns true" do
-          # expect(game).to receive(:remaining_lives).and_return(8)
+      context "and the player guesses the wrong letter" do
+        let(:guess) { 'q' }
+
+        it "will return false" do
+          expect(game_won).to be false
+        end
+      end
+
+      context "and the player guesses the right letter" do
+        let(:guess) { 'f' }
+
+        it "will return false" do
+          expect(game_won).to be false
+        end
+      end
+    end
+
+    context "when the player has no lives remaining" do
+
+      context "and the player made all posssible guesses" do
+        before do
+          game.validate_guess('q')
+          game.validate_guess('w')
+          game.validate_guess('e')
+          game.validate_guess('t')
+          game.validate_guess('f')
+          game.validate_guess('y')
+          game.validate_guess('s')
+          game.validate_guess('o')
+          game.validate_guess('p')
+        end
+
+        it "will return false" do
+          expect(game_won).to be false
+        end
+      end
+
+      context "and the player made correct guesses" do
+        before do
+          game.validate_guess('f')
+          game.validate_guess('w')
+          game.validate_guess('x')
+          game.validate_guess('t')
+          game.validate_guess('l')
+          game.validate_guess('y')
+          game.validate_guess('s')
+          game.validate_guess('u')
+          game.validate_guess('p')
+        end
+
+        it "will return true" do
           expect(game_won).to be true
-        end
-      end
-
-      context "when player has no lives remaining" do
-        let(:remaining_lives) { 0 }
-
-        it "returns false" do
-          # expect(game).to receive(:remaining_lives).and_return(0)
-          expect(game_won).to be false
-        end
-      end
-    end
-
-    context "when the word is not guessed" do
-      let(:guesses) { ['f', 'i', 'k'] }
-
-      context "when player has lives remaining" do
-        let(:remaining_lives) { 5 }
-
-        it "returns false" do
-          expect(game_won).to be false
-        end
-      end
-
-      context "when player has no lives remaining" do
-        let(:remaining_lives) { 0 }
-
-        it "returns false" do
-          expect(game_won).to be false
         end
       end
     end
@@ -178,66 +198,79 @@ RSpec.describe HangmanGameState do
 
     context "when the player has no lives remaining" do
 
-      before do
-        game.validate_guess('q')
-        game.validate_guess('w')
-        game.validate_guess('e')
-        game.validate_guess('t')
-        game.validate_guess('y')
-        game.validate_guess('s')
-        game.validate_guess('o')
-        game.validate_guess('p')
+      context "and the player made all possibles guesses" do
+
+        before do
+          game.validate_guess('q')
+          game.validate_guess('w')
+          game.validate_guess('e')
+          game.validate_guess('t')
+          game.validate_guess('f')
+          game.validate_guess('y')
+          game.validate_guess('s')
+          game.validate_guess('o')
+          game.validate_guess('p')
+        end
+
+        it "will return true" do
+          expect(game_lost).to be true
+        end
       end
 
-      it "will return true" do
-        expect(game_lost).to be true
+      context "and the player made correct guesses " do
+        before do
+          game.validate_guess('f')
+          game.validate_guess('w')
+          game.validate_guess('x')
+          game.validate_guess('t')
+          game.validate_guess('l')
+          game.validate_guess('y')
+          game.validate_guess('s')
+          game.validate_guess('u')
+          game.validate_guess('p')
+        end
+
+        it "will return false" do
+          expect(game_lost).to be false
+        end
+      end
+    end
+  end
+
+  describe "#game_in_progress?" do
+    let(:word) { "Hello" }
+    subject(:game_in_progress) { game.game_in_progress? }
+
+    context "when player has neither won nor lost the game" do
+      before do
+        game.validate_guess('r')
+        game.validate_guess('h')
+        game.validate_guess('l')
+        game.validate_guess('k')
+      end
+
+      it "returns true" do
+        expect(game_in_progress).to be true
+      end
+    end
+
+    context "when the player has not won, but lost the game" do
+      before do
+        game.validate_guess('r')
+        game.validate_guess('h')
+        game.validate_guess('l')
+        game.validate_guess('k')
+        game.validate_guess('y')
+        game.validate_guess('s')
+        game.validate_guess('u')
+        game.validate_guess('p')
+        game.validate_guess('q')
+        game.validate_guess('t')
+      end
+
+      it "returns false" do
+        expect(game_in_progress).to be false
       end
     end
   end
 end
-#
-#   describe "#game_in_progress?" do
-#     let(:word) { "Hello" }
-#     subject(:game_in_progress) { game.game_in_progress?(word, guesses, lives) }
-#
-#     context "when player has not won the game" do
-#       let(:guesses) { ['a', 'e', 'w', 'h'] }
-#
-#       context "and the player has not lost the game either" do
-#         let(:lives) { 5 }
-#
-#         it "returns true" do
-#           expect(game_in_progress).to be true
-#         end
-#       end
-#
-#       context "but the player has lost the game" do
-#         let(:lives) { 0 }
-#
-#         it "returns false" do
-#           expect(game_in_progress).to be false
-#         end
-#       end
-#     end
-#
-#     context "when player has won the game" do
-#       let(:guesses) { ['l', 'e', 'o', 'h'] }
-#
-#       context "and the player has not lost the game either" do
-#         let(:lives) { 5 }
-#
-#         it "returns false" do
-#           expect(game_in_progress).to be false
-#         end
-#       end
-#
-#       context "but the player has lost the game" do
-#         let(:lives) { 0 }
-#
-#         it "raises an error" do
-#           expect { game_in_progress }.to raise_error(ArgumentError, "word is guessed correctly but lives are 0")
-#         end
-#       end
-#     end
-#   end
-# end
