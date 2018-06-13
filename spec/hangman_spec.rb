@@ -111,7 +111,7 @@ RSpec.describe HangmanGameState do
         let(:guess) { 'q' }
 
         it "will return false" do
-          expect(game_won).to be false
+          expect(game).to_not be_won
         end
       end
 
@@ -119,7 +119,7 @@ RSpec.describe HangmanGameState do
         let(:guess) { 'f' }
 
         it "will return false" do
-          expect(game_won).to be false
+          expect(game).to_not be_won
         end
       end
     end
@@ -128,37 +128,25 @@ RSpec.describe HangmanGameState do
 
       context "and the player made all posssible guesses" do
         before do
-          game.validate_guess('q')
-          game.validate_guess('w')
-          game.validate_guess('e')
-          game.validate_guess('t')
-          game.validate_guess('f')
-          game.validate_guess('y')
-          game.validate_guess('s')
-          game.validate_guess('o')
-          game.validate_guess('p')
+          %w(q w e r t y f y s o p).each do |guess|
+            game.attempt_guess(guess)
+          end
         end
 
         it "will return false" do
-          expect(game_won).to be false
+          expect(game).to_not be_won
         end
       end
 
       context "and the player made correct guesses" do
         before do
-          game.validate_guess('f')
-          game.validate_guess('w')
-          game.validate_guess('x')
-          game.validate_guess('t')
-          game.validate_guess('l')
-          game.validate_guess('y')
-          game.validate_guess('s')
-          game.validate_guess('u')
-          game.validate_guess('p')
+          %w(f w x t l y s u p q).each do |guess|
+            game.attempt_guess(guess)
+          end
         end
 
         it "will return true" do
-          expect(game_won).to be true
+          expect(game).to be_won
         end
       end
     end
