@@ -12,7 +12,7 @@ RSpec.describe HangmanGameState do
   subject(:game) { HangmanGameState.new(word, lives) }
 
   describe "#validate_guess" do
-    let(:validate_guess) { game.validate_guess(guess) }
+    let(:validate_guess) { game.attempt_guess(guess) }
 
     context "#not a valid_guess?" do
       let(:guess) { '@' }
@@ -26,11 +26,11 @@ RSpec.describe HangmanGameState do
       let(:guess) { 'b' }
 
       before do
-        expect(game.validate_guess(guess)).to eql :guess_correct
+        expect(game.attempt_guess(guess)).to eq :guess_correct
       end
 
       it "tells the player the guess is duplicate" do
-        expect(game.validate_guess(guess)).to eql :duplicate_guess
+        expect(game.attempt_guess(guess)).to eq :duplicate_guess
       end
     end
 
@@ -38,11 +38,11 @@ RSpec.describe HangmanGameState do
       let(:guess) { 'q' }
 
       before do
-        expect(game.validate_guess(guess)).to eql :guess_incorrect
+        expect(game.attempt_guess(guess)).to eq :guess_incorrect
       end
 
       it "tells the player the guess is duplicate" do
-        expect(game.validate_guess(guess)).to eql :duplicate_guess
+        expect(game.attempt_guess(guess)).to eql :duplicate_guess
       end
     end
 
@@ -67,11 +67,9 @@ RSpec.describe HangmanGameState do
 
     context "when the word is guessed " do
       before do
-        # expect(game).to receive(:guesses).and_return(guesses)
-        game.validate_guess('h')
-        game.validate_guess('l')
-        game.validate_guess('o')
-        game.validate_guess('e')
+        %w(h l o e).each do |guess|
+          game.attempt_guess(guess)
+        end
       end
 
       it "returns true" do
@@ -81,8 +79,9 @@ RSpec.describe HangmanGameState do
 
     context "when the word is not guessed" do
       before do
-        game.validate_guess('l')
-        game.validate_guess('z')
+        %w(l z).each do |guess|
+          game.attempt_guess(guess)
+        end
       end
 
       it "returns false" do
@@ -98,14 +97,14 @@ RSpec.describe HangmanGameState do
     context "when the player has started the game" do
 
       it "will return false" do
-        expect(game_won).to be false
+        expect(game).to_not be_won
       end
     end
 
     context "when the player has lives remaining" do
 
       before do
-        game.validate_guess(guess)
+        game.attempt_guess(guess)
       end
 
       context "and the player guesses the wrong letter" do
