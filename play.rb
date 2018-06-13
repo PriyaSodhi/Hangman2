@@ -2,11 +2,15 @@ require_relative 'hangman_game_state.rb'
 require_relative 'hangman_console_ui.rb'
 require_relative 'turn_result.rb'
 require_relative 'clue_builder.rb'
-require 'byebug'
+require 'byebug'j
 =begin
 The purpose of play class
 1. Controls the flow of the game
 2. It will talk to view and model
+3. play_game will
+  - take a turn
+  - display the guess start
+  - display the game state (won or lost)
 =end
 
 class Play
@@ -19,17 +23,12 @@ class Play
   end
 
   def play_game
+    hangman_ui.display_game_state(game_state)
 
     while game_state.game_in_progress? do
-      hangman_ui.display_game_state(game_state)
       turn_result = take_turn
       hangman_ui.display_guess_state(turn_result)
-    end
-
-    if game_state.won?
-      hangman_ui.display_won_message(game_state.word)
-    else
-      hangman_ui.display_lost_message
+      hangman_ui.display_game_state(game_state)
     end
   end
 
