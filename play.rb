@@ -2,7 +2,7 @@ require_relative 'hangman_game_state.rb'
 require_relative 'hangman_console_ui.rb'
 require_relative 'turn_result.rb'
 require_relative 'clue_builder.rb'
-require 'byebug'j
+require 'byebug'
 =begin
 The purpose of play class
 1. Controls the flow of the game
