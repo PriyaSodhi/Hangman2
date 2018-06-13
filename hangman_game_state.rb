@@ -52,7 +52,7 @@ class HangmanGameState
 
   def game_in_progress?
     if word_guessed? && remaining_lives < 1
-      raise ArgumentError, "word is guessed correctly but lives are #{lives}"
+      raise ArgumentError, "word is guessed correctly but remaining lives are 0"
     end
 
     !won? && !lost?
