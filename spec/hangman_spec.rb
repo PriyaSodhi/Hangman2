@@ -122,31 +122,31 @@ RSpec.describe HangmanGameState do
           expect(game).to_not be_won
         end
       end
-    end
-
-    context "when the player has no lives remaining" do
-
-      context "and the player made all posssible guesses" do
-        before do
-          %w(q w e r t y f y s o p).each do |guess|
-            game.attempt_guess(guess)
-          end
-        end
-
-        it "will return false" do
-          expect(game).to_not be_won
-        end
-      end
 
       context "and the player made correct guesses" do
         before do
-          %w(f w x t l y s u p q).each do |guess|
+          %w(i e f q r l x a v u).each do |guess|
             game.attempt_guess(guess)
           end
         end
 
         it "will return true" do
           expect(game).to be_won
+        end
+      end
+    end
+
+    context "when the player has no lives remaining" do
+
+      context "and the player made all posssible guesses" do
+        before do
+          %w(q w e r t y z x ).each do |guess|
+            game.attempt_guess(guess)
+          end
+        end
+
+        it "will return false" do
+          expect(game).to_not be_won
         end
       end
     end
@@ -183,22 +183,6 @@ RSpec.describe HangmanGameState do
           expect(game).to_not be_lost
         end
       end
-    end
-
-    context "when the player has no lives remaining" do
-
-      context "and the player made all possibles guesses" do
-
-        before do
-          %w(q w e r t y f y s o p).each do |guess|
-            game.attempt_guess(guess)
-          end
-        end
-
-        it "will return true" do
-          expect(game).to be_lost
-        end
-      end
 
       context "and the player made correct guesses " do
         before do
@@ -212,6 +196,21 @@ RSpec.describe HangmanGameState do
         end
       end
     end
+
+    context "when the player has no lives remaining" do
+
+      context "and the player made all possibles guesses" do
+        before do
+          %w(q w e r t y s o i p).each do |guess|
+            game.attempt_guess(guess)
+          end
+        end
+
+        it "will return true" do
+          expect(game).to be_lost
+        end
+      end
+    end
   end
 
   describe "#game_in_progress?" do
@@ -220,33 +219,64 @@ RSpec.describe HangmanGameState do
 
     context "when player has neither won nor lost the game" do
       before do
-        game.validate_guess('r')
-        game.validate_guess('h')
-        game.validate_guess('l')
-        game.validate_guess('k')
+        %w(r h l k).each do |guess|
+          game.attempt_guess(guess)
+        end
       end
 
       it "returns true" do
-        expect(game_in_progress).to be true
+        expect(game).to be_game_in_progress
       end
     end
 
     context "when the player has not won, but lost the game" do
       before do
-        game.validate_guess('r')
-        game.validate_guess('h')
-        game.validate_guess('l')
-        game.validate_guess('k')
-        game.validate_guess('y')
-        game.validate_guess('s')
-        game.validate_guess('u')
-        game.validate_guess('p')
-        game.validate_guess('q')
-        game.validate_guess('t')
+        %w(r h l k y s u p q t).each do |guess|
+          game.attempt_guess(guess)
+        end
       end
 
       it "returns false" do
-        expect(game_in_progress).to be false
+        expect(game).to_not be_game_in_progress
+      end
+    end
+
+    context "the player has attempted to make guesses" do
+
+      before do
+        %w(q w r g f d s a v e h l o).each do |guess|
+           game.attempt_guess(guess)
+        end
+      end
+
+      context "but the player has no lives remaining" do
+        it "raises an error" do
+          expect{ game_in_progress }.to raise_error(ArgumentError, "word is guessed correctly but remaining lives are 0")
+        end
+      end
+    end
+  end
+
+  describe "#remaining_lives" do
+    let(:word) { "Ruapehu" }
+    before do
+      game.attempt_guess(guess)
+      puts game.remaining_lives
+    end
+
+    context "when player guessed a correct letter" do
+      let(:guess) { 'e' }
+
+      it "will not change the remaining_lives" do
+        expect(game.remaining_lives).to eq 8
+      end
+    end
+
+    context "when player guessed an incorrect letter" do
+      let(:guess) { 'q' }
+
+      it "will decrement remaining_lives by 1" do
+        expect(game.remaining_lives).to eq 7
       end
     end
   end
