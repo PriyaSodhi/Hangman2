@@ -18,7 +18,7 @@ class HangmanGameState
   end
 
   def process_guess(guess)
-    result_of_guess_state = validate_guess(guess)
+    result_of_guess_state = attempt_guess(guess)
 
     TurnResult.new(
       result_of_guess_state,
@@ -32,7 +32,7 @@ class HangmanGameState
     )
   end
 
-  def validate_guess(guess)
+  def attempt_guess(guess)
     if !valid_guess?(guess)
       :invalid_guess
     elsif duplicate_guess?(guess)
@@ -47,7 +47,7 @@ class HangmanGameState
   end
 
   def remaining_lives
-    lives - (guesses - word.downcase.chars.uniq).length
+    lives - incorrect_guesses.length
   end
 
   def game_in_progress?
@@ -67,7 +67,7 @@ class HangmanGameState
   end
 
   def word_guessed?
-    (word.downcase.chars.uniq - guesses).empty?
+    unguessed_characters.empty?
   end
 
   def clue
@@ -85,5 +85,13 @@ class HangmanGameState
 
   def duplicate_guess?(guess)
     guesses.include?(guess)
+  end
+
+  def incorrect_guesses
+    guesses - word.downcase.chars.uniq
+  end
+
+  def unguessed_characters
+    word.downcase.chars.uniq - guesses
   end
 end
