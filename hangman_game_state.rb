@@ -33,23 +33,20 @@ class HangmanGameState
   end
 
   def validate_guess(guess)
-    validation_result = if invalid_guess?(guess)
+    if invalid_guess?(guess)
       :invalid_guess
     elsif duplicate_guess?(guess)
       :duplicate_guess
-    else
-      nil
     end
   end
 
   def attempt_guess(guess)
     return validate_guess(guess) if validate_guess(guess)
 
+    guesses << guess
     if guess_correct?(guess)
-      guesses << guess
       :guess_correct
     else
-      guesses << guess
       :guess_incorrect
     end
   end

@@ -292,7 +292,7 @@ RSpec.describe HangmanGameState do
     context "when the game just started " do
 
       it "will build the initial clue" do
-      expect(game.clue).to eq [nil]*word.length
+        expect(game.clue).to eq [nil]*word.length
       end
     end
 
