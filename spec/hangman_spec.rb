@@ -11,7 +11,7 @@ RSpec.describe HangmanGameState do
   let(:guess) { 'a' }
   subject(:game) { HangmanGameState.new(word, lives) }
 
-  describe "#validate_guess" do
+  describe "#attempt_guess" do
     let(:validate_guess) { game.attempt_guess(guess) }
 
     context "#not a valid_guess?" do
@@ -259,24 +259,60 @@ RSpec.describe HangmanGameState do
 
   describe "#remaining_lives" do
     let(:word) { "Ruapehu" }
-    before do
-      game.attempt_guess(guess)
-      puts game.remaining_lives
-    end
 
     context "when player guessed a correct letter" do
       let(:guess) { 'e' }
 
       it "will not change the remaining_lives" do
-        expect(game.remaining_lives).to eq 8
+        expect {
+          game.attempt_guess(guess)
+        }.not_to change{
+          game.remaining_lives
+        }
       end
     end
 
-    context "when player guessed an incorrect letter" do
+      context "when player guessed an incorrect letter" do
       let(:guess) { 'q' }
 
       it "will decrement remaining_lives by 1" do
-        expect(game.remaining_lives).to eq 7
+        expect {
+          game.attempt_guess(guess)
+        }.to change{
+          game.remaining_lives
+        }.by(-1)
+      end
+    end
+  end
+
+  describe "#clue" do
+    let(:word) { "Ruapehu" }
+    let(:clue) { game.clue }
+
+    before do
+      expect {
+        game.attempt_guess(guess)
+      }.to change{
+      clue }.by([])
+    end
+
+    context "when the game just started " do
+      let(:guess) { nil }
+      it "will build the initial clue" do
+      end
+    end
+
+    context "when the player made correct guess " do
+      let(:guess) { 'e' }
+
+      it "will add the guess to the clue " do
+      end
+    end
+
+    context "when player made incorrect guess" do
+      let(:guess) { 'z' }
+
+      it "will not make any changes to the clue" do
       end
     end
   end
