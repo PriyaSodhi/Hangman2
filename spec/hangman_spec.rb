@@ -1,5 +1,6 @@
 require_relative '../hangman_game_state'
 require_relative '../hangman_console_ui'
+require 'byebug'
 
 require 'rspec'
 
@@ -14,7 +15,7 @@ RSpec.describe HangmanGameState do
   describe "#attempt_guess" do
     let(:validate_guess) { game.attempt_guess(guess) }
 
-    context "#not a valid_guess?" do
+    context "#invalid_guess?" do
       let(:guess) { '@' }
 
       it "tells the player the guess is not valid" do
@@ -287,18 +288,11 @@ RSpec.describe HangmanGameState do
 
   describe "#clue" do
     let(:word) { "Ruapehu" }
-    let(:clue) { game.clue }
-
-    before do
-      expect {
-        game.attempt_guess(guess)
-      }.to change{
-      clue }.by([])
-    end
 
     context "when the game just started " do
-      let(:guess) { nil }
+
       it "will build the initial clue" do
+      expect(game.clue).to eq [nil]*word.length
       end
     end
 
@@ -306,6 +300,10 @@ RSpec.describe HangmanGameState do
       let(:guess) { 'e' }
 
       it "will add the guess to the clue " do
+        expect {
+          game.attempt_guess(guess)
+        }.to change{
+        game.clue }.from([nil]*word.length).to([nil, nil, nil, nil, 'e', nil, nil])
       end
     end
 
@@ -313,6 +311,7 @@ RSpec.describe HangmanGameState do
       let(:guess) { 'z' }
 
       it "will not make any changes to the clue" do
+        expect(game.clue).to eq [nil]*word.length
       end
     end
   end
