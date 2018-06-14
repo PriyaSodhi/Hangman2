@@ -32,15 +32,23 @@ class HangmanGameState
     )
   end
 
-  def attempt_guess(guess)
-    if !valid_guess?(guess)
+  def validate_guess(guess)
+    validation_result = if invalid_guess?(guess)
       :invalid_guess
     elsif duplicate_guess?(guess)
       :duplicate_guess
-    elsif guess_correct?(guess)
+    else
+      nil
+    end
+  end
+
+  def attempt_guess(guess)
+    return validate_guess(guess) if validate_guess(guess)
+
+    if guess_correct?(guess)
       guesses << guess
       :guess_correct
-    elsif !guess_correct?(guess)
+    else
       guesses << guess
       :guess_incorrect
     end
@@ -79,8 +87,8 @@ class HangmanGameState
     word.downcase.include?(guess)
   end
 
-  def valid_guess?(guess)
-    /\A[A-Za-z]\z/.match?(guess.to_s)
+  def invalid_guess?(guess)
+    !(/\A[A-Za-z]\z/.match?(guess.to_s))
   end
 
   def duplicate_guess?(guess)
